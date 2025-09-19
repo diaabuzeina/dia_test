@@ -4,54 +4,135 @@
   <meta charset="UTF-8">
   <title>مستشفى الأمل</title>
   <style>
-    body { font-family: Tahoma, Arial, sans-serif; background: #f9f9f9; margin:0; padding:0; text-align:center; }
-    header { background:#0077b6; color:white; padding:15px; font-size:24px; font-weight:bold; }
-    .bot-window { width:400px; height:500px; background:white; border-radius:10px; box-shadow:0 0 10px rgba(0,0,0,0.2); margin:50px auto; position:relative; padding:20px; }
-    .close-btn { position:absolute; top:10px; left:10px; background:crimson; color:white; border:none; padding:5px 10px; cursor:pointer; border-radius:5px; font-weight:bold; }
-    .messages { text-align:right; height:400px; overflow-y:auto; margin-bottom:10px; padding:10px; border:1px solid #ddd; }
-    .input-box { display:flex; gap:5px; }
-    .input-box input { flex:1; padding:10px; border:1px solid #ccc; border-radius:5px; }
-    .input-box button { padding:10px 15px; border:none; background:#0077b6; color:white; border-radius:5px; cursor:pointer; }
+    body { font-family: Tahoma, Arial, sans-serif; margin:0; padding:0; background:#f0f4f8; }
+    header { background:#0077b6; color:white; padding:20px; font-size:28px; font-weight:bold; text-align:center; }
+    main { padding:40px; text-align:center; }
+    .section { background:white; padding:30px; border-radius:12px; margin:20px auto; max-width:800px; box-shadow:0 4px 15px rgba(0,0,0,0.1);}
+    h2 { color:#0077b6; }
+    p { font-size:18px; line-height:1.6; }
+
+    /* زر البوت */
+    #botToggle {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background:#0077b6;
+      color:white;
+      border:none;
+      border-radius:50%;
+      width:60px;
+      height:60px;
+      font-size:28px;
+      cursor:pointer;
+      box-shadow:0 4px 12px rgba(0,0,0,0.2);
+      z-index:1000;
+    }
+
+    /* نافذة البوت */
+    #botWindow {
+      display:none;
+      position: fixed;
+      bottom:100px;
+      right:30px;
+      width:350px;
+      height:450px;
+      background:white;
+      border-radius:12px;
+      box-shadow:0 6px 20px rgba(0,0,0,0.3);
+      padding:20px;
+      z-index:1000;
+      display:flex;
+      flex-direction:column;
+    }
+    #botWindow header {
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      font-weight:bold;
+      font-size:18px;
+      border-bottom:1px solid #ddd;
+      padding-bottom:5px;
+      margin-bottom:10px;
+    }
+    #closeBot { background:crimson; color:white; border:none; padding:2px 8px; border-radius:5px; cursor:pointer; }
+    #messages {
+      flex:1;
+      overflow-y:auto;
+      border:1px solid #ddd;
+      border-radius:8px;
+      padding:10px;
+      margin-bottom:10px;
+      text-align:right;
+    }
+    #botInput { display:flex; gap:5px; }
+    #botInput input { flex:1; padding:8px; border:1px solid #ccc; border-radius:5px; }
+    #botInput button { padding:8px 12px; background:#0077b6; color:white; border:none; border-radius:5px; cursor:pointer; }
   </style>
 </head>
 <body>
-  <header>مستشفى الأمل</header>
-  <div class="bot-window" id="botWindow">
-    <button class="close-btn" onclick="document.getElementById('botWindow').style.display='none'">X</button>
-    <div class="messages" id="messages">
-      <p><strong>البوت:</strong> أهلاً بك في مستشفى الأمل! كيف أقدر أساعدك؟</p>
-    </div>
-    <div class="input-box">
-      <input type="text" id="userInput" placeholder="اكتب رسالتك..." autofocus>
-      <button onclick="sendMessage()">إرسال</button>
-    </div>
+
+<header>مستشفى الأمل</header>
+
+<main>
+  <div class="section">
+    <h2>مرحبا بكم في مستشفى الأمل</h2>
+    <p>نقدم خدمات طبية متكاملة لجميع الأعمار، مع أقسام الطوارئ، الأطفال، والباطنية.</p>
   </div>
+  <div class="section">
+    <h2>خدماتنا</h2>
+    <p>لحجز موعد، استفسار عن الدواء أو أي معلومات أخرى، يرجى استخدام البوت الموجود أسفل يمين الصفحة.</p>
+  </div>
+</main>
 
-  <script>
-    const input = document.getElementById("userInput");
-    const messages = document.getElementById("messages");
+<!-- زر البوت -->
+<button id="botToggle">💬</button>
 
-    input.addEventListener("keypress", function(e){
-      if(e.key==="Enter") sendMessage();
-    });
+<!-- نافذة البوت -->
+<div id="botWindow">
+  <header>البوت <button id="closeBot">X</button></header>
+  <div id="messages">
+    <p><strong>البوت:</strong> أهلاً بك! كيف أستطيع مساعدتك؟</p>
+  </div>
+  <div id="botInput">
+    <input type="text" id="userInput" placeholder="اكتب رسالتك..." autofocus>
+    <button onclick="sendMessage()">إرسال</button>
+  </div>
+</div>
 
-    function sendMessage(){
-      const text = input.value.trim();
-      if(!text) return;
-      messages.innerHTML += `<p><strong>أنت:</strong> ${text}</p>`;
-      input.value = "";
-      messages.scrollTop = messages.scrollHeight;
+<script>
+  const botToggle = document.getElementById("botToggle");
+  const botWindow = document.getElementById("botWindow");
+  const closeBot = document.getElementById("closeBot");
+  const messages = document.getElementById("messages");
+  const userInput = document.getElementById("userInput");
 
-      // رد مباشر من البوت (بدون API)
-      let reply = "شكراً لتواصلك معنا!";
-      if(text.includes("موعد")) reply = "لحجز موعد، يرجى الاتصال على الرقم 123456.";
-      if(text.includes("قسم")) reply = "لدينا أقسام: الطوارئ، الأطفال، والباطنية.";
-      if(text.includes("دواء")) reply = "يرجى مراجعة الصيدلية الخاصة بالمستشفى.";
+  botToggle.onclick = () => {
+    botWindow.style.display = "flex";
+    userInput.focus();
+  };
+  closeBot.onclick = () => botWindow.style.display = "none";
 
-      messages.innerHTML += `<p><strong>البوت:</strong> ${reply}</p>`;
-      messages.scrollTop = messages.scrollHeight;
-      input.focus();
-    }
-  </script>
+  userInput.addEventListener("keypress", function(e){
+    if(e.key==="Enter") sendMessage();
+  });
+
+  function sendMessage(){
+    const text = userInput.value.trim();
+    if(!text) return;
+    messages.innerHTML += `<p><strong>أنت:</strong> ${text}</p>`;
+    userInput.value = "";
+    messages.scrollTop = messages.scrollHeight;
+
+    let reply = "شكراً لتواصلك معنا!";
+    if(text.includes("موعد")) reply = "لحجز موعد، يرجى الاتصال على الرقم 123456.";
+    if(text.includes("قسم")) reply = "لدينا أقسام: الطوارئ، الأطفال، والباطنية.";
+    if(text.includes("دواء")) reply = "يرجى مراجعة الصيدلية الخاصة بالمستشفى.";
+
+    messages.innerHTML += `<p><strong>البوت:</strong> ${reply}</p>`;
+    messages.scrollTop = messages.scrollHeight;
+    userInput.focus();
+  }
+</script>
+
 </body>
 </html>

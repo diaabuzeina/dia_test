@@ -2,12 +2,12 @@ from flask import Flask, render_template, request, jsonify
 
 app = Flask(__name__)
 
-# صفحة رئيسية
+# الصفحة الرئيسية
 @app.route("/")
 def home():
     return render_template("index.html")
 
-# API بسيط للبوت
+# API للبوت (اختياري)
 @app.route("/bot", methods=["POST"])
 def bot_response():
     user_msg = request.json.get("message", "")

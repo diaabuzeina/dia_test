@@ -1,11 +1,10 @@
-from flask import Flask, send_file
+from flask import Flask
 
 app = Flask(__name__)
 
 @app.route('/')
 def home():
-    # إرسال الملف index.html مباشرة من نفس مسار app.py
-    return send_file('index.html')
+    return "<h1>مرحبا بك! التطبيق شغال على Render 🎉</h1>"
 
 if __name__ == '__main__':
     app.run(debug=True)

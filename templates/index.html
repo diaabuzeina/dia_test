@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>مستشفى الأمل</title>
+  <style>
+    body {
+      font-family: Tahoma, Arial, sans-serif;
+      background-color: #f9f9f9;
+      margin: 0;
+      padding: 0;
+      text-align: center;
+    }
+    header {
+      background: #0077b6;
+      color: white;
+      padding: 15px;
+      font-size: 24px;
+      font-weight: bold;
+    }
+    .bot-window {
+      width: 400px;
+      height: 500px;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+      margin: 50px auto;
+      position: relative;
+      padding: 20px;
+    }
+    .close-btn {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: crimson;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      cursor: pointer;
+      border-radius: 5px;
+      font-weight: bold;
+    }
+    .messages {
+      text-align: right;
+      height: 400px;
+      overflow-y: auto;
+      margin-bottom: 10px;
+      padding: 10px;
+      border: 1px solid #ddd;
+    }
+    .input-box {
+      display: flex;
+      gap: 5px;
+    }
+    .input-box input {
+      flex: 1;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    .input-box button {
+      padding: 10px 15px;
+      border: none;
+      background: #0077b6;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <header>مستشفى الأمل</header>
+  <div class="bot-window" id="botWindow">
+    <button class="close-btn" onclick="document.getElementById('botWindow').style.display='none'">X</button>
+    <div class="messages" id="messages">
+      <p><strong>البوت:</strong> أهلاً بك في مستشفى الأمل! كيف أقدر أساعدك؟</p>
+    </div>
+    <div class="input-box">
+      <input type="text" id="userInput" placeholder="اكتب رسالتك..." autofocus>
+      <button onclick="sendMessage()">إرسال</button>
+    </div>
+  </div>
+
+  <script>
+    const input = document.getElementById("userInput");
+    const messages = document.getElementById("messages");
+
+    input.addEventListener("keypress", function(e) {
+      if (e.key === "Enter") {
+        sendMessage();
+      }
+    });
+
+    function sendMessage() {
+      const text = input.value.trim();
+      if (text === "") return;
+      messages.innerHTML += `<p><strong>أنت:</strong> ${text}</p>`;
+      input.value = "";
+      messages.scrollTop = messages.scrollHeight;
+
+      // رد بسيط من البوت
+      let reply = "شكراً لتواصلك معنا!";
+      if (text.includes("موعد")) reply = "لحجز موعد، يرجى الاتصال على الرقم 123456.";
+      if (text.includes("قسم")) reply = "لدينا أقسام: الطوارئ، الأطفال، والباطنية.";
+      if (text.includes("دواء")) reply = "يرجى مراجعة الصيدلية الخاصة بالمستشفى.";
+
+      messages.innerHTML += `<p><strong>البوت:</strong> ${reply}</p>`;
+      messages.scrollTop = messages.scrollHeight;
+    }
+  </script>
+</body>
+</html>

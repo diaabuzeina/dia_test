@@ -8,104 +8,32 @@ body { font-family: 'Tahoma', sans-serif; margin:0; background:#f0f4f8; }
 header { background:#0077b6; color:white; padding:20px; font-size:28px; text-align:center; }
 main { padding:40px; text-align:center; }
 .section { background:white; padding:30px; border-radius:12px; margin:20px auto; max-width:800px; box-shadow:0 4px 15px rgba(0,0,0,0.1);}
-h2 { color:#0077b6; }
-p { font-size:18px; line-height:1.6; }
-
-/* زر البوت */
-#botToggle {
-  position: fixed;
-  bottom: 30px;
-  right: 30px;
-  background:linear-gradient(45deg,#0077b6,#00b4d8);
-  color:white;
-  border:none;
-  border-radius:50%;
-  width:60px;
-  height:60px;
-  font-size:28px;
-  cursor:pointer;
-  box-shadow:0 4px 12px rgba(0,0,0,0.3);
-  z-index:1000;
-  transition: transform 0.2s;
-}
-#botToggle:hover { transform: scale(1.1); }
-
-/* نافذة البوت */
-#botWindow {
-  display:none;
-  position: fixed;
-  bottom:100px;
-  right:30px;
-  width:360px;
-  height:480px;
-  background:white;
-  border-radius:16px;
-  box-shadow:0 8px 25px rgba(0,0,0,0.3);
-  padding:15px;
-  z-index:1000;
-  display:flex;
-  flex-direction:column;
-  animation: fadeIn 0.3s ease-in-out;
-  font-size:16px;
-}
-@keyframes fadeIn { from {opacity:0; transform:translateY(20px);} to {opacity:1; transform:translateY(0);} }
-
-#botWindow header {
-  display:flex;
-  justify-content:flex-end;
-  border-bottom:1px solid #ddd;
-  padding-bottom:5px;
-  margin-bottom:10px;
-}
-#closeBot { background:crimson; color:white; border:none; padding:2px 8px; border-radius:5px; cursor:pointer; }
-
-/* رسائل البوت والمستخدم */
-#messages {
-  flex:1;
-  overflow-y:auto;
-  padding:10px;
-  border-radius:10px;
-  margin-bottom:10px;
-  display:flex;
-  flex-direction:column;
-  gap:8px;
-}
-.msg { padding:10px 14px; border-radius:15px; max-width:80%; word-wrap:break-word; line-height:1.4; }
-.user { background:linear-gradient(45deg,#0077b6,#00b4d8); color:white; align-self:flex-end; }
-.bot { background:#e0e0e0; color:black; align-self:flex-start; }
-
+#botToggle { position:fixed; bottom:30px; right:30px; background:#0077b6; color:white; border:none; border-radius:50%; width:60px; height:60px; font-size:28px; cursor:pointer; z-index:1000; }
+#botWindow { display:none; position:fixed; bottom:100px; right:30px; width:360px; height:480px; background:white; border-radius:16px; padding:15px; flex-direction:column; z-index:1000; box-shadow:0 8px 25px rgba(0,0,0,0.3); }
+#messages { flex:1; overflow-y:auto; margin-bottom:10px; }
 #botInput { display:flex; gap:5px; }
-#botInput input { flex:1; padding:10px; border:1px solid #ccc; border-radius:8px; }
-#botInput button { padding:10px 14px; background:linear-gradient(45deg,#0077b6,#00b4d8); color:white; border:none; border-radius:8px; cursor:pointer; transition: 0.2s; }
-#botInput button:hover { transform: scale(1.05); }
-
+#botInput input { flex:1; padding:10px; border-radius:8px; border:1px solid #ccc; }
+#botInput button { padding:10px 14px; border:none; border-radius:8px; background:#0077b6; color:white; cursor:pointer; }
 </style>
 </head>
 <body>
 
 <header>مستشفى الأمل</header>
-
 <main>
   <div class="section">
     <h2>مرحبا بكم في مستشفى الأمل</h2>
-    <p>نقدم خدمات طبية متكاملة لجميع الأعمار، مع أقسام الطوارئ، الأطفال، والباطنية.</p>
-  </div>
-  <div class="section">
-    <h2>خدماتنا</h2>
-    <p>لحجز موعد أو استفسار عن الخدمات، اضغط على زر البوت أسفل يمين الصفحة.</p>
+    <p>اضغط على زر البوت أسفل يمين الصفحة للتواصل معنا.</p>
   </div>
 </main>
 
-<!-- زر البوت -->
 <button id="botToggle">💬</button>
 
-<!-- نافذة البوت -->
 <div id="botWindow">
   <header><button id="closeBot">X</button></header>
   <div id="messages"></div>
   <div id="botInput">
-    <input type="text" id="userInput" placeholder="اكتب رسالتك..." autofocus>
-    <button onclick="sendMessage()">إرسال</button>
+    <input type="text" id="userInput" placeholder="اكتب رسالتك..." />
+    <button id="sendBtn">إرسال</button>
   </div>
 </div>
 
@@ -115,41 +43,38 @@ const botWindow = document.getElementById("botWindow");
 const closeBot = document.getElementById("closeBot");
 const messages = document.getElementById("messages");
 const userInput = document.getElementById("userInput");
+const sendBtn = document.getElementById("sendBtn");
 
 // إظهار البوت عند الضغط على الزر
-botToggle.onclick = () => {
-  botWindow.style.display = "flex";
-  userInput.focus();
-};
+botToggle.onclick = () => { botWindow.style.display = "flex"; userInput.focus(); };
 
 // إغلاق البوت
 closeBot.onclick = () => botWindow.style.display = "none";
 
-// إرسال رسالة عند الضغط على Enter
-userInput.addEventListener("keypress", function(e){
-  if(e.key==="Enter") sendMessage();
-});
-
-// وظيفة إرسال واستقبال الرسائل
-function sendMessage(){
+// إرسال رسالة
+function sendMessage() {
   const text = userInput.value.trim();
   if(!text) return;
   messages.innerHTML += `<div class="msg user">${text}</div>`;
   userInput.value = "";
   messages.scrollTop = messages.scrollHeight;
 
-  // ردود جاهزة
-  let reply = "شكراً لتواصلك معنا!";
-  if(/موعد/i.test(text)) reply = "لحجز موعد، يرجى الاتصال على الرقم 123456.";
-  else if(/قسم/i.test(text)) reply = "لدينا أقسام: الطوارئ، الأطفال، والباطنية.";
-  else if(/دواء/i.test(text)) reply = "يرجى مراجعة الصيدلية الخاصة بالمستشفى.";
-
-  setTimeout(() => {
-    messages.innerHTML += `<div class="msg bot">${reply}</div>`;
+  // إرسال للبايثون عبر fetch
+  fetch("/bot", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ message: text })
+  })
+  .then(res => res.json())
+  .then(data => {
+    messages.innerHTML += `<div class="msg bot">${data.reply}</div>`;
     messages.scrollTop = messages.scrollHeight;
     userInput.focus();
-  }, 500);
+  });
 }
+
+sendBtn.onclick = sendMessage;
+userInput.addEventListener("keypress", e => { if(e.key==="Enter") sendMessage(); });
 </script>
 
 </body>
